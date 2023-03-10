@@ -1,3 +1,7 @@
+/** This class implements a binary tree data structure with nodes that contain an element of type E,
+ a reference to its parent node, and references to its left and right child nodes.
+The class includes methods for adding and removing nodes, as well as traversing the tree and
+ performing operations on its nodes.*/
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -6,7 +10,8 @@ public class LinkedBinaryTree<E> {
     private Node<E> root;
     private int size;
 
-
+/**The main method generates random binary trees of varying sizes and computes
+ their average height and diameter over a certain number of iterations for each size.*/
 
     public static void main(String[] args) {
         Random rnd = new Random();
@@ -31,6 +36,9 @@ public class LinkedBinaryTree<E> {
             System.out.println();
         }
     }
+
+
+    /**The height method recursively computes the height of a given node in the tree.*/
     public int height(Node<E> node) {
         if (node == null) return -1;
         int leftHeight = height(node.getLeft());
@@ -38,6 +46,8 @@ public class LinkedBinaryTree<E> {
         return 1 + Math.max(leftHeight, rightHeight);
     }
 
+
+    /**  The diameter method computes the diameter of the tree, */
     public int diameter() {
         if (isEmpty()) return 0;
         return diameter(root);
@@ -52,6 +62,26 @@ public class LinkedBinaryTree<E> {
         return Math.max(leftHeight + rightHeight + 2, Math.max(leftDiameter, rightDiameter));
     }
 
+
+
+    public void constructRandom(int n) {
+        if (!isEmpty()) return;
+        AtomicInteger key = new AtomicInteger(0);
+        root = randomTree(null, n, key);
+    }
+
+    private Node<E> randomTree(Node<E> parent, Integer n, AtomicInteger key) {
+        if (n == 0) return null;
+        Random rnd = new Random();
+        Integer leftCount = rnd.nextInt(n); // split the number of nodes
+        Node<E> node = new Node<E>((E) ((Integer) key.get()), parent, null, null);
+        size++;
+        key.getAndIncrement();
+        node.setLeft(randomTree(node, leftCount, key));
+        key.getAndIncrement();
+        node.setRight(randomTree(node, n - leftCount - 1, key));
+        return node;
+    }
 
     private static class Node<E> {
         private E element;
@@ -188,22 +218,5 @@ public class LinkedBinaryTree<E> {
         }
     }
 
-    public void constructRandom(int n) {
-        if (!isEmpty()) return;
-        AtomicInteger key = new AtomicInteger(0);
-        root = randomTree(null, n, key);
-    }
 
-    private Node<E> randomTree(Node<E> parent, Integer n, AtomicInteger key) {
-        if (n == 0) return null;
-        Random rnd = new Random();
-        Integer leftCount = rnd.nextInt(n); // split the number of nodes
-        Node<E> node = new Node<E>((E) ((Integer) key.get()), parent, null, null);
-        size++;
-        key.getAndIncrement();
-        node.setLeft(randomTree(node, leftCount, key));
-        key.getAndIncrement();
-        node.setRight(randomTree(node, n - leftCount - 1, key));
-        return node;
-    }
 }
